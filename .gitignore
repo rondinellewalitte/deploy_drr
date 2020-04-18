@@ -121,3 +121,5 @@ dist
 
 web/build/*
 sistema/dist/*
+sistema/.env
+
