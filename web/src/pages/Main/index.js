@@ -67,10 +67,13 @@ export default class Main extends Component {
     const { idGrupo, newEscola, newNomes, newEstado, grupos } = this.state;
 
     const result = grupos.find((fruit) => fruit.grupo_id === idGrupo);
-    console.log(result.grupo_nome);
 
-    const removeSpace = newNomes.trim();
-    const arrayNomes = removeSpace.split(';');
+    const removetable = newNomes.replace(/(\r\n|\n|\r)/gm, ';');
+    const removeSpace = removetable.trim();
+    const filtered = removeSpace.split(';');
+    const arrayNomes = filtered.filter(Boolean);
+
+    console.log(arrayNomes);
 
     const lastId = await api.get('/id').catch((error) => {
       console.log(error);
@@ -115,6 +118,7 @@ export default class Main extends Component {
     await api
       .get('/cadastrar')
       .then((response) => {
+        console.log(response);
         this.setState({
           alert: getAlert(),
         });
@@ -140,7 +144,13 @@ export default class Main extends Component {
   }
 
   render() {
-    const { idGrupo, newEscola, newNomes, newEstado, alert } = this.state;
+    const {
+      idGrupo,
+      newEscola,
+      newNomes,
+      newEstado,
+      alert,
+    } = this.state;
     return (
       <Container className="p-4" variant="light">
         <style type="text/css">
@@ -230,7 +240,7 @@ export default class Main extends Component {
                 value={idGrupo}
                 onChange={this.handleInputChange3}
                 options={this.grupos()}
-                placeholder="Selecione o Grupo"
+                placeholder={idGrupo}
                 required
               />
             </Form.Group>

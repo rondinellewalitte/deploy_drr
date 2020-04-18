@@ -90,7 +90,7 @@ export default class Repository extends Component {
             <Row>
               <Col md={10}>
                 <Select
-                  placeholder="Buscar grupo"
+                  placeholder={idGrupo}
                   value={idGrupo}
                   onChange={this.handleInputChange}
                   options={this.grupos()}
@@ -115,6 +115,7 @@ export default class Repository extends Component {
                 <th>Nome Completo do Aluno</th>
                 <th>Email</th>
                 <th>Senha</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -123,6 +124,7 @@ export default class Repository extends Component {
                   <td>{item.name}</td>
                   <td>{item.email}</td>
                   <td>{item.password}</td>
+                  <td>{item.status}</td>
                 </tr>
               ))}
             </tbody>
