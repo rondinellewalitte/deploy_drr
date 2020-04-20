@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import Select from 'react-select';
 
+import './index.css';
+
 import {
   Jumbotron,
   Row,
@@ -12,9 +14,11 @@ import {
   Table,
   Navbar,
   Nav,
+  Image,
 } from 'react-bootstrap';
 
 import api from '../../services/api';
+import image from '../img/01.png';
 
 export default class Repository extends Component {
   constructor(props) {
@@ -58,34 +62,27 @@ export default class Repository extends Component {
     const { idGrupo, cursos } = this.state;
     return (
       <Container className="p-4">
-        <style type="text/css">
-          {`
-            .btn-flat {
-              background-color: #7159c1;
-              color: white;
-            }
-
-          `}
-        </style>
         <Navbar bg="light" expand="lg">
-          <Navbar.Brand href="#home">DRR Aulas Online</Navbar.Brand>
+          <Navbar.Brand>
+            <Image src={image} />
+          </Navbar.Brand>
           <Navbar.Collapse
             id="basic-navbar-nav"
             className="justify-content-end"
           >
             <Nav>
-              <Button variant="flat" href="/">
+              <Button variant="primary" href="/aplication">
                 Matriculas
               </Button>
               <p>&nbsp;&nbsp;</p>
-              <Button variant="flat" href="/repository">
+              <Button variant="primary" href="/repository">
                 Listar
               </Button>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
         <br />
-        <Jumbotron>
+        <Jumbotron className="background">
           <Form onSubmit={this.handleSubmit}>
             <Row>
               <Col md={10}>
@@ -98,7 +95,7 @@ export default class Repository extends Component {
               </Col>
               <Col>
                 <Button
-                  variant="flat"
+                  variant="primary"
                   type="submit"
                   size="sm"
                   block

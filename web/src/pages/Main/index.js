@@ -3,6 +3,8 @@ import Select from 'react-select';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import './index.css';
+
 import SweetAlert from 'react-bootstrap-sweetalert';
 
 import { MdSystemUpdateAlt } from 'react-icons/all';
@@ -13,9 +15,11 @@ import {
   Button,
   Navbar,
   Nav,
+  Image,
 } from 'react-bootstrap';
 
 import api from '../../services/api';
+import image from '../img/01.png';
 
 export default class Main extends Component {
   constructor(props) {
@@ -60,20 +64,18 @@ export default class Main extends Component {
   };
 
   handleSubmit = async (e) => {
-    var i;
-    var idid;
+    let i;
+    let idid;
     e.preventDefault();
 
     const { idGrupo, newEscola, newNomes, newEstado, grupos } = this.state;
 
-    const result = grupos.find((fruit) => fruit.grupo_id === idGrupo);
+    const result = grupos.find((grupo) => grupo.grupo_id === idGrupo);
 
     const removetable = newNomes.replace(/(\r\n|\n|\r)/gm, ';');
     const removeSpace = removetable.trim();
     const filtered = removeSpace.split(';');
     const arrayNomes = filtered.filter(Boolean);
-
-    console.log(arrayNomes);
 
     const lastId = await api.get('/id').catch((error) => {
       console.log(error);
@@ -84,11 +86,10 @@ export default class Main extends Component {
     } else {
       idid = lastId.data + 1;
     }
-
-    for (i = 0; i < arrayNomes.length; i += 1) {
+    arrayNomes.forEach(async (nome) => {
       const ob = {
-        name: arrayNomes[i],
-        email: `${newEstado}${newEscola}${idid}@drr.com`,
+        name: nome,
+        email: `${newEstado}${newEscola}${idid++}@drr.com`,
         password: '123',
         tipo: 0,
         status: 1,
@@ -105,9 +106,7 @@ export default class Main extends Component {
         .catch((error) => {
           console.log(error);
         });
-
-      idid += 1;
-    }
+    });
 
     const getAlert = () => (
       <SweetAlert success title="Sucesso" onConfirm={() => this.hideAlert()}>
@@ -137,52 +136,36 @@ export default class Main extends Component {
   }
 
   hideAlert() {
-    console.log('Hiding alert...');
     this.setState({
       alert: null,
     });
   }
 
   render() {
-    const {
-      idGrupo,
-      newEscola,
-      newNomes,
-      newEstado,
-      alert,
-    } = this.state;
+    const { idGrupo, newEscola, newNomes, newEstado, alert } = this.state;
     return (
       <Container className="p-4" variant="light">
-        <style type="text/css">
-          {`
-            .btn-flat {
-              background-color: #7159c1;
-              color: white;
-            }
-            .nvb-collor {
-              background-color: #569fb8;
-            }
-          `}
-        </style>
-        <Navbar variant="light" expand="lg">
-          <Navbar.Brand href="#home">DRR Aulas Online</Navbar.Brand>
+        <Navbar className="background" expand="lg">
+          <Navbar.Brand>
+            <Image src={image} />
+          </Navbar.Brand>
           <Navbar.Collapse
             id="basic-navbar-nav"
             className="justify-content-end"
           >
             <Nav>
-              <Button variant="flat" href="/">
+              <Button variant="primary" href="/">
                 Matriculas
               </Button>
               <p>&nbsp;&nbsp;</p>
-              <Button variant="flat" href="/repository">
+              <Button variant="primary" href="/repository">
                 Listar
               </Button>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
         <br />
-        <Jumbotron>
+        <Jumbotron className="background">
           <h2 className="header">
             <MdSystemUpdateAlt />
             Criação de Matrículas
@@ -203,7 +186,6 @@ export default class Main extends Component {
                 as="select"
                 value={newEstado}
                 onChange={this.handleInputChange1}
-                required
               >
                 <option value="AC">Acre</option>
                 <option value="AL">Alagoas</option>
@@ -241,7 +223,7 @@ export default class Main extends Component {
                 onChange={this.handleInputChange3}
                 options={this.grupos()}
                 placeholder={idGrupo}
-                required
+                isSearchable
               />
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -249,13 +231,13 @@ export default class Main extends Component {
               <Form.Control
                 as="textarea"
                 rows="5"
-                placeholder="Joao;Maria;Eduardo"
+                placeholder="Ex:&#10;Joao da Silva&#10;Maria Aparecida da Costa"
                 value={newNomes}
                 onChange={this.handleInputChange}
                 required
               />
             </Form.Group>
-            <Button variant="flat" type="submit" size="lg">
+            <Button variant="primary" type="submit" size="lg">
               Enviar
             </Button>
             {alert}
