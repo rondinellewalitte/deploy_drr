@@ -17,7 +17,7 @@ routes.post('/users', UserController.store);
 routes.get('/id', UserController.verificarid);
 routes.post('/list', ListController.list);
 routes.get('/listGroupId', ListController.listGroupId);
-routes.get('/cadastrar', RegisterController.cadastrar);
+routes.get('/cadastrar', RegisterController.register_students);
 routes.get('/grupos', RegisterController.findgroup);
 
 export default routes;

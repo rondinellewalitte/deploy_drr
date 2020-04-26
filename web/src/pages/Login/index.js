@@ -34,11 +34,10 @@ class Login extends Component {
       try {
         const response = await api.post('/sessions', { email, password });
         login(response.data.token);
-        this.props.history.push('/aplication');
+        this.props.history.push('/');
       } catch (err) {
         this.setState({
-          error:
-            'Houve um problema com o login, verifique suas credenciais. T.T',
+          error: 'Dados de Login Errado',
         });
       }
     }

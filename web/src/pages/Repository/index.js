@@ -71,7 +71,7 @@ export default class Repository extends Component {
             className="justify-content-end"
           >
             <Nav>
-              <Button variant="primary" href="/aplication">
+              <Button variant="primary" href="/">
                 Matriculas
               </Button>
               <p>&nbsp;&nbsp;</p>

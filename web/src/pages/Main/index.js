@@ -64,7 +64,6 @@ export default class Main extends Component {
   };
 
   handleSubmit = async (e) => {
-    let i;
     let idid;
     e.preventDefault();
 
