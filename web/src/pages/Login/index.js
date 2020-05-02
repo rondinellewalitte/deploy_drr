@@ -58,7 +58,7 @@ class Login extends Component {
               </Form.Label>
               <h6>
                 {' '}
-                <Badge variant="secondary">Email</Badge>
+                <Badge variant="secondary">Abreviação do Colégio</Badge>
               </h6>
               <Form.Control type="email" placeholder="Enter email" />
               <Form.Text className="text-muted">

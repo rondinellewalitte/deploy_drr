@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-
+import SweetAlert from 'react-bootstrap-sweetalert';
 import Select from 'react-select';
+import PrintProvider, { Print, NoPrint } from 'react-easy-print';
 
 import './index.css';
 
@@ -15,6 +16,7 @@ import {
   Navbar,
   Nav,
   Image,
+  Badge,
 } from 'react-bootstrap';
 
 import api from '../../services/api';
@@ -27,15 +29,29 @@ export default class Repository extends Component {
       idGrupo: null,
       grupos: [],
       cursos: [],
+      alert: null,
     };
   }
 
   componentDidMount() {
-    api.get('/listGroupId').then((response) => {
-      this.setState({
-        grupos: response.data,
+    const RespostAPI = () => (
+      <SweetAlert error title="Erro" onConfirm={() => this.hideAlert()}>
+        Erro ao conectar com a Base de Dados
+      </SweetAlert>
+    );
+    api
+      .get('/listGroupId')
+      .then((response) => {
+        this.setState({
+          grupos: response.data,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        this.setState({
+          alert: RespostAPI(),
+        });
       });
-    });
   }
 
   handleInputChange = (e) => {
@@ -58,8 +74,14 @@ export default class Repository extends Component {
     }));
   }
 
+  hideAlert() {
+    this.setState({
+      alert: null,
+    });
+  }
+
   render() {
-    const { idGrupo, cursos } = this.state;
+    const { idGrupo, cursos, alert } = this.state;
     return (
       <Container className="p-4">
         <Navbar bg="light" expand="lg">
@@ -83,49 +105,78 @@ export default class Repository extends Component {
         </Navbar>
         <br />
         <Jumbotron className="background">
-          <Form onSubmit={this.handleSubmit}>
-            <Row>
-              <Col md={10}>
-                <Select
-                  placeholder={idGrupo}
-                  value={idGrupo}
-                  onChange={this.handleInputChange}
-                  options={this.grupos()}
-                />
-              </Col>
-              <Col>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  size="sm"
-                  block
-                  style={{ height: '38px' }}
-                >
-                  Buscar
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-          <Table responsive>
-            <thead>
-              <tr>
-                <th>Nome Completo do Aluno</th>
-                <th>Email</th>
-                <th>Senha</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cursos.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.email}</td>
-                  <td>{item.password}</td>
-                  <td>{item.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          <PrintProvider>
+            <NoPrint>
+              <Form onSubmit={this.handleSubmit}>
+                <Row>
+                  <Col md={10}>
+                    <Select
+                      placeholder={idGrupo}
+                      value={idGrupo}
+                      onChange={this.handleInputChange}
+                      options={this.grupos()}
+                    />
+                  </Col>
+                  <Col>
+                    <Button
+                      variant="primary"
+                      type="submit"
+                      size="sm"
+                      block
+                      style={{ height: '38px' }}
+                    >
+                      Buscar
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+              <Print>
+                <Table responsive>
+                  <thead>
+                    <tr>
+                      <th>
+                        <h6>
+                          {' '}
+                          <Badge variant="secondary">
+                            Nome Completo do Aluno
+                          </Badge>
+                        </h6>
+                      </th>
+                      <th>
+                        {' '}
+                        <h6>
+                          <Badge variant="secondary">Email</Badge>
+                        </h6>
+                      </th>
+                      <th>
+                        {' '}
+                        <h6>
+                          <Badge variant="secondary">Senha</Badge>
+                        </h6>
+                      </th>
+                      <th>
+                        {' '}
+                        <h6>
+                          <Badge variant="secondary">Status no Sistema</Badge>
+                        </h6>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cursos.map((item) => (
+                      <tr key={item.id}>
+                        <td>{item.name}</td>
+                        <td>{item.email}</td>
+                        <td>{item.password}</td>
+                        <td>{item.status ? 'Ativado' : 'Não Ativado'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </Print>
+              {alert}
+            </NoPrint>
+          </PrintProvider>
         </Jumbotron>
       </Container>
     );

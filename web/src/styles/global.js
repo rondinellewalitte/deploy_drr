@@ -7,6 +7,10 @@ export default createGlobalStyle`
     outline: 0;
     box-sizing: border-box;
  }
+ @media print {
+  @page { margin: 0; }
+  body { margin: 1.6cm; }
+}
 
  html, body, #root {
    min-height: 100%;

@@ -16,6 +16,7 @@ import {
   Navbar,
   Nav,
   Image,
+  Badge,
 } from 'react-bootstrap';
 
 import api from '../../services/api';
@@ -35,6 +36,11 @@ export default class Main extends Component {
   }
 
   componentDidMount() {
+    const RespostAPI = () => (
+      <SweetAlert error title="Erro" onConfirm={() => this.hideAlert()}>
+        Erro ao conectar com a Base de Dados
+      </SweetAlert>
+    );
     api
       .get('/grupos')
       .then((response) => {
@@ -44,6 +50,9 @@ export default class Main extends Component {
       })
       .catch((error) => {
         console.log(error);
+        this.setState({
+          alert: RespostAPI(),
+        });
       });
   }
 
@@ -64,12 +73,34 @@ export default class Main extends Component {
   };
 
   handleSubmit = async (e) => {
+    const { idGrupo, newEscola, newNomes, newEstado, grupos } = this.state;
+
+    const getAlert = () => (
+      <SweetAlert success title="Sucesso" onConfirm={() => this.hideAlert()}>
+        Cadastro realizado com sucesso
+      </SweetAlert>
+    );
+    const getAlerterror = () => (
+      <SweetAlert error title="Erro" onConfirm={() => this.hideAlert()}>
+        O Campo <font color="red">Grupo</font> não pode ser em Branco!
+      </SweetAlert>
+    );
+    const RespostAPI = (message) => (
+      <SweetAlert error title="Erro" onConfirm={() => this.hideAlert()}>
+        {message}
+      </SweetAlert>
+    );
+
     let idid;
     e.preventDefault();
 
-    const { idGrupo, newEscola, newNomes, newEstado, grupos } = this.state;
-
-    const result = grupos.find((grupo) => grupo.grupo_id === idGrupo);
+    if (idGrupo === null) {
+      this.setState({
+        alert: getAlerterror(),
+      });
+      return null;
+    }
+    const result = grupos.find((grupo) => grupo.grupo_nome === idGrupo);
 
     const removetable = newNomes.replace(/(\r\n|\n|\r)/gm, ';');
     const removeSpace = removetable.trim();
@@ -103,15 +134,11 @@ export default class Main extends Component {
           console.log(response);
         })
         .catch((error) => {
-          console.log(error);
+          this.setState({
+            alert: RespostAPI(error.response.data.message.error),
+          });
         });
     });
-
-    const getAlert = () => (
-      <SweetAlert success title="Sucesso" onConfirm={() => this.hideAlert()}>
-        Cadastro realizado com sucesso
-      </SweetAlert>
-    );
 
     await api
       .get('/cadastrar')
@@ -122,7 +149,10 @@ export default class Main extends Component {
         });
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.response.data.message.error);
+        this.setState({
+          alert: RespostAPI(error.response.data.message.error),
+        });
       });
   };
 
@@ -130,7 +160,7 @@ export default class Main extends Component {
     const { grupos } = this.state;
     return grupos.map((data) => ({
       label: data.grupo_nome,
-      value: data.grupo_id,
+      value: data.grupo_nome,
     }));
   }
 
@@ -142,6 +172,7 @@ export default class Main extends Component {
 
   render() {
     const { idGrupo, newEscola, newNomes, newEstado, alert } = this.state;
+
     return (
       <Container className="p-4" variant="light">
         <Navbar className="background" expand="lg">
@@ -176,57 +207,72 @@ export default class Main extends Component {
               value={newEscola}
               onChange={this.handleInputChange2}
             >
-              <Form.Label>Prefixo do Colegio</Form.Label>
+              <h6>
+                {' '}
+                <Badge variant="secondary">Abreviação do Colégio :</Badge>
+              </h6>
               <Form.Control placeholder="Ex: CPMG, CEMI" required />
             </Form.Group>
             <Form.Group controlId="formGridState">
-              <Form.Label>Estado</Form.Label>
+              <h6>
+                {' '}
+                <Badge variant="secondary">Estado :</Badge>
+              </h6>
               <Form.Control
                 as="select"
                 value={newEstado}
                 onChange={this.handleInputChange1}
+                required
               >
-                <option value="AC">Acre</option>
-                <option value="AL">Alagoas</option>
-                <option value="AP">Amapá</option>
-                <option value="AM">Amazonas</option>
-                <option value="BA">Bahia</option>
-                <option value="CE">Ceará</option>
-                <option value="DF">Distrito Federal</option>
-                <option value="ES">Espírito Santo</option>
-                <option value="GO">Goiás</option>
-                <option value="MA">Maranhão</option>
-                <option value="MT">Mato Grosso</option>
-                <option value="MS">Mato Grosso do Sul</option>
-                <option value="MG">Minas Gerais</option>
-                <option value="PA">Pará</option>
-                <option value="PB">Paraíba</option>
-                <option value="PR">Paraná</option>
-                <option value="PE">Pernambuco</option>
-                <option value="PI">Piauí</option>
-                <option value="RJ">Rio de Janeiro</option>
-                <option value="RN">Rio Grande do Norte</option>
-                <option value="RS">Rio Grande do Sul</option>
-                <option value="RO">Rondônia</option>
-                <option value="RR">Roraima</option>
-                <option value="SC">Santa Catarina</option>
-                <option value="SP">São Paulo</option>
-                <option value="SE">Sergipe</option>
-                <option value="TO">Tocantins</option>
+                <option value="">Selecione Uma Opção</option>
+                <option value="ac">Acre</option>
+                <option value="al">Alagoas</option>
+                <option value="ap">Amapá</option>
+                <option value="am">Amazonas</option>
+                <option value="ba">Bahia</option>
+                <option value="ce">Ceará</option>
+                <option value="df">Distrito Federal</option>
+                <option value="es">Espírito Santo</option>
+                <option value="go">Goiás</option>
+                <option value="ma">Maranhão</option>
+                <option value="mt">Mato Grosso</option>
+                <option value="ms">Mato Grosso do Sul</option>
+                <option value="mg">Minas Gerais</option>
+                <option value="pa">Pará</option>
+                <option value="pb">Paraíba</option>
+                <option value="pr">Paraná</option>
+                <option value="pe">Pernambuco</option>
+                <option value="pi">Piauí</option>
+                <option value="rj">Rio de Janeiro</option>
+                <option value="rn">Rio Grande do Norte</option>
+                <option value="rs">Rio Grande do Sul</option>
+                <option value="ro">Rondônia</option>
+                <option value="rr">Roraima</option>
+                <option value="sc">Santa Catarina</option>
+                <option value="sp">São Paulo</option>
+                <option value="se">Sergipe</option>
+                <option value="to">Tocantins</option>
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="formGridState">
-              <Form.Label>Grupo</Form.Label>
+              <h6>
+                {' '}
+                <Badge variant="secondary">Grupo :</Badge>
+              </h6>
               <Select
                 value={idGrupo}
                 onChange={this.handleInputChange3}
                 options={this.grupos()}
                 placeholder={idGrupo}
                 isSearchable
+                required
               />
             </Form.Group>
             <Form.Group controlId="exampleForm.ControlTextarea1">
-              <Form.Label>Nomes dos Alunos</Form.Label>
+              <h6>
+                {' '}
+                <Badge variant="secondary">Lista de Alunos :</Badge>
+              </h6>
               <Form.Control
                 as="textarea"
                 rows="5"
